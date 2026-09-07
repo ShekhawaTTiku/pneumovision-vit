@@ -1,37 +1,128 @@
-# Vision-Transformer-for-X-Ray-Pneumonia-Detection
+<div align="center">
 
-## The project
+# 🩻 Vision Transformer for X-Ray Pneumonia Detection
 
-The Visual Transformer (ViT), which involves the Transformer architecture, has recently been introduced as a viable alternative to the classical CNN to deal with computer vision problems. In this project, we create our own ViT in order to investigate the differences between the ViT and the CNN as well as to point out the potential advantages of using a ViT. For this, we consider a dataset consisting of binary-labeled chest X-ray images, where the X-rays are either standard or of a patient with pneumonia. Inspired by an open-source code implementation from Keras, our ViT is able to achieve a classification accuracy of 93.73%, compared to that of our baseline CNN accuracy of 91.19%. We also demonstrate that our ViT is less sensitive to aggressive data augmentation, as well as significantly reduces the time of training.
+**A from-scratch ViT that outperforms a CNN baseline on chest X-ray classification — and trains up to 5× faster.**
 
-## Data
+[![Live Demo](https://img.shields.io/badge/demo-live-4CD3F0?style=for-the-badge)](https://vitpneumovision.streamlit.app/)
+[![Framework](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](#)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](#)
 
-The second dataset consisted of 5,863 binary-labeled images of Chest X-Rays, described in D. Zhang K, "Identifying Medical Diagnoses and Treatable Diseases by Image-Based Deep Learning". The images consisted of exclusively one of two pneumonia diseases, bacterial and viral, both labeled PNEUMONIA, together with images labeled as NORMAL of healthy patients.
+**[🚀 Try the live app →](https://vitpneumovision.streamlit.app/)**
 
-<p float="left">
+</div>
+
+---
+
+## Overview
+
+The Vision Transformer (ViT) has recently emerged as a viable alternative to the classical CNN for computer vision problems. This project builds a ViT **from scratch** to investigate how it stacks up against a CNN baseline on a real diagnostic imaging task: classifying chest X-rays as **NORMAL** or **PNEUMONIA**.
+
+Inspired by an open-source Keras implementation, our ViT reaches **93.73% classification accuracy**, edging out our CNN baseline's 91.19% — while also proving considerably more resilient to aggressive data augmentation and dramatically faster to train.
+
+<div align="center">
+
+| | ViT (ours) | CNN (baseline) |
+|---|:---:|:---:|
+| **Accuracy** | **93.73%** | 91.19% |
+| **Training time** | up to **5× faster** | 1× |
+| **Sensitivity to augmentation** | Low | High |
+
+</div>
+
+---
+
+## Dataset
+
+**5,863 binary-labeled chest X-ray images**, sourced from Kermany et al., *"Identifying Medical Diagnoses and Treatable Diseases by Image-Based Deep Learning."* Images fall into two classes:
+
+- **NORMAL** — healthy patients
+- **PNEUMONIA** — bacterial or viral pneumonia (both grouped under a single label)
+
+<p align="center">
   <img src="assets/Normal.jpg" width="130" />
-  <img src="assets/Virus.jpg" width="130" /> 
+  <img src="assets/Virus.jpg" width="130" />
   <img src="assets/Bacteria.jpg" width="130" />
 </p>
+<p align="center"><sub>Left to right: Normal · Viral pneumonia · Bacterial pneumonia</sub></p>
+
+---
 
 ## Methods
 
-The project was initially divided into three stages. The first stage was to demonstrate viable accuracy for the ViT. For this purpose, a ViT, as well as a CNN, was built. Secondly, the aim was to investigate and test the ViTs reaction to image data augmentation. Finally, the impact of different ViT specific hyperparameters was evaluated. For these purposes, a number of experiments were designed.
+The project unfolded in three stages:
 
-<img src="assets/Data_Augs.png" width="530" />
+1. **Baseline viability** — build both a ViT and a CNN, establish that the ViT is competitive
+2. **Augmentation robustness** — test each architecture's reaction to aggressive image augmentation
+3. **Hyperparameter sensitivity** — sweep ViT-specific hyperparameters to find what actually moves the needle
 
-## ViT Hyperparameter Tuning
+<p align="center">
+  <img src="assets/Data_Augs.png" width="530" />
+</p>
 
-In this experiment, we wanted to investigate the sensitivity of the ViT to hyper-parameter tuning. In general, we could observe that higher accuracy was achieved when using low weight decay but that different combinations of transformer layers and projection dimensions achieved almost similar accuracy. In terms of sensitivity to changing different parameters, we could observe that the input dimension, projection dimension, and a number of transformer layers were most important. As displayed in table 3 we achieved our best accuracy with image-dimension 72 but as shown in section 5.4 compared to higher image dimension does not seem to have a significant effect on the accuracy of this particular data-set. However, when using lower image dimension during hyper-parameter tuning the running time was cut in half and the best accuracy was achieved at an earlier epoch. The ViT-architecture with the best validation binary accuracy was then tested on the test dataset consisting of 500 images. It demonstrated a validation F1-score of 91.8 % on the validation data and 79% on the test data. The lower F1-score on the test data is most likely due to slight overfitting because of the limited samples in the dataset (around 1000 samples for NORMAL).
+### Hyperparameter tuning
 
-<img src="assets/Hyperparam_Tuning.png" width="530" />
+Sweeping the ViT's hyperparameters surfaced a few clear patterns:
+
+- **Low weight decay** consistently produced higher accuracy
+- Different combinations of **transformer layer count** and **projection dimension** converged on similar accuracy — the model is fairly forgiving here
+- **Input image dimension**, **projection dimension**, and **number of transformer layers** were the most sensitive levers overall
+- Best accuracy came at an image dimension of **72px** — though larger dimensions didn't meaningfully hurt accuracy either (see Section 5.4)
+- Smaller image dimensions **halved training time** and reached peak accuracy in fewer epochs
+
+The best-performing configuration was evaluated on a held-out test set of 500 images:
+
+<div align="center">
+
+| Split | F1 Score |
+|---|:---:|
+| Validation | 91.8% |
+| Test | 79% |
+
+</div>
+
+The drop on test is most likely mild overfitting — the dataset has only ~1,000 NORMAL samples to work with.
+
+<p align="center">
+  <img src="assets/Hyperparam_Tuning.png" width="530" />
+</p>
+
+---
+
+## Results
+
+> **Our ViT achieved 93.79% accuracy, versus 91.19% for our CNN baseline — while training up to 5× faster.**
+
+- ✅ **Accuracy** — the ViT edges out the CNN on this binary classification task
+- ✅ **Training speed** — up to 5× faster to reach comparable results, meaningfully lowering compute cost
+- ✅ **Augmentation robustness** — the ViT's inherent properties make it considerably less sensitive to aggressive data augmentation than the CNN
+- ⚠️ **Data hunger** — the ViT needs more training data than the CNN to hit optimal performance
+- ⚠️ **Scaling to complexity** — early experiments on the multi-labeled NIH dataset showed performance degrading quickly on more complex, multi-class problems, likely requiring pre-training as suggested by Dosovitskiy et al. (2020)
+
+We couldn't draw firm conclusions about sensitivity to input image size specifically — that remains an open question for this dataset.
+
+---
+
+## Try it yourself
+
+The trained model is deployed as an interactive Streamlit app — upload a chest X-ray and get a live classification with confidence scores.
+
+<div align="center">
+
+### **[vitpneumovision.streamlit.app →](https://vitpneumovision.streamlit.app/)**
+
+</div>
+
+---
 
 ## Conclusion
 
-The results of this project clearly indicate that the ViT is a viable alternative when it comes to image classification in general and medical X-ray classification in particular. Considering a binary-labeled dataset of chest X-ray images, **our ViT achieved an accuracy of 93.79%, compared to our baseline CNN accuracy of 91.19%.**
+Transformers for computer vision are a relatively young area, and this project adds one more data point in their favor: a ViT trained from scratch can match — and in this case beat — a CNN baseline on real diagnostic imaging, while cutting training cost significantly. That said, the ViT's appetite for data and its struggles on more complex multi-label problems are real limitations worth keeping in mind before reaching for it over a CNN by default.
 
-Furthermore, **our ViT considerably reduced the training time, as much as five times**, required to achieve this result, indicating the promising potential of the ViT to reduce the computational resources required for image classification.
+As Dosovitskiy et al. (2020) suggested, pre-training looks like the likely path forward for scaling ViTs to harder vision problems — and it's an obvious next step for extending this work beyond binary classification.
 
-Moreover, our results suggest that the inherent **properties of the ViT make it considerably less sensitive to aggressive data augmentation** but we could not draw any general conclusions regarding the sensitivity to input image size. We also noticed limitations with the ViT. Our results on the dataset size indicated that the **ViT was to a larger extent in need of training data compared to our CNN** in order to reach optimal performance. Our initial efforts with the multi-labeled NIH dataset also indicated that the performance quickly degrades for more complex datasets and thus, on those occasions, may require pre-training as suggested by Dosovitskiy et al. (2020). Transformers for computer vision is a relatively new area that has exposed a hidden side of the transformer architecture.
+---
 
-Our results have confirmed that the ViT is indeed a viable alternative to CNN, as well as hinted at the potential advantages. The results of the ViT have not gone unnoticed and will surely be researched further within the computer vision community in the coming years.
+<div align="center">
+<sub>Built with PyTorch · Deployed with Streamlit</sub>
+</div>
