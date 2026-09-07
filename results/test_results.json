@@ -1,0 +1,15 @@
+{
+  "checkpoint": "C:\\Users\\GIGABYTE\\Downloads\\Vision-Transformer-for-X-Ray-Pneumonia-Detection-main\\Vision-Transformer-for-X-Ray-Pneumonia-Detection-main\\checkpoints\\best_vit.pt",
+  "checkpoint_epoch": 26,
+  "checkpoint_val_f1": "0.9833770778652668",
+  "test_loss": 2.52532,
+  "test_accuracy": 0.75641,
+  "test_f1": 0.8355,
+  "test_precision": 0.72285,
+  "test_recall": 0.98974,
+  "num_test_samples": 624,
+  "class_names": [
+    "NORMAL",
+    "PNEUMONIA"
+  ]
+}
