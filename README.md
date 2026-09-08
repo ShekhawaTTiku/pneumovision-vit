@@ -1,128 +1,509 @@
 <div align="center">
 
-# 🩻 Vision Transformer for X-Ray Pneumonia Detection
+# 📄 DocXtract
 
-**A from-scratch ViT that outperforms a CNN baseline on chest X-ray classification — and trains up to 5× faster.**
+### End-to-end Document OCR & Structured Data Extraction Pipeline
 
-[![Live Demo](https://img.shields.io/badge/demo-live-4CD3F0?style=for-the-badge)](https://vitpneumovision.streamlit.app/)
-[![Framework](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](#)
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](#)
+*Turn scanned documents and PDFs into clean, structured JSON — locally, offline, and transparently.*
 
-**[🚀 Try the live app →](https://vitpneumovision.streamlit.app/)**
+[![Live Demo](https://img.shields.io/badge/demo-live-4CD3F0?style=for-the-badge)](https://docxtract1.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Tesseract OCR](https://img.shields.io/badge/Tesseract-OCR-4B8BBE?style=for-the-badge&logo=googlelens&logoColor=white)](https://github.com/tesseract-ocr/tesseract)
+[![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![License](https://img.shields.io/badge/License-Unspecified-lightgrey?style=for-the-badge)](#license)
 
-</div>
-
----
-
-## Overview
-
-The Vision Transformer (ViT) has recently emerged as a viable alternative to the classical CNN for computer vision problems. This project builds a ViT **from scratch** to investigate how it stacks up against a CNN baseline on a real diagnostic imaging task: classifying chest X-rays as **NORMAL** or **PNEUMONIA**.
-
-Inspired by an open-source Keras implementation, our ViT reaches **93.73% classification accuracy**, edging out our CNN baseline's 91.19% — while also proving considerably more resilient to aggressive data augmentation and dramatically faster to train.
-
-<div align="center">
-
-| | ViT (ours) | CNN (baseline) |
-|---|:---:|:---:|
-| **Accuracy** | **93.73%** | 91.19% |
-| **Training time** | up to **5× faster** | 1× |
-| **Sensitivity to augmentation** | Low | High |
+**[🚀 Try the live app →](https://docxtract1.streamlit.app/)**
 
 </div>
 
 ---
 
-## Dataset
+## ✨ Overview
 
-**5,863 binary-labeled chest X-ray images**, sourced from Kermany et al., *"Identifying Medical Diagnoses and Treatable Diseases by Image-Based Deep Learning."* Images fall into two classes:
+**DocXtract** accepts document images and PDFs, extracts text using **Tesseract OCR**, identifies the document type using a **keyword-based scoring mechanism**, and applies document-specific **regular-expression extraction rules** to convert unstructured OCR text into structured fields.
 
-- **NORMAL** — healthy patients
-- **PNEUMONIA** — bacterial or viral pneumonia (both grouped under a single label)
+It ships with an interactive **Streamlit interface** for uploading documents, running the pipeline, and reviewing extracted results — no cloud OCR API required.
 
-<p align="center">
-  <img src="assets/Normal.jpg" width="130" />
-  <img src="assets/Virus.jpg" width="130" />
-  <img src="assets/Bacteria.jpg" width="130" />
-</p>
-<p align="center"><sub>Left to right: Normal · Viral pneumonia · Bacterial pneumonia</sub></p>
-
----
-
-## Methods
-
-The project unfolded in three stages:
-
-1. **Baseline viability** — build both a ViT and a CNN, establish that the ViT is competitive
-2. **Augmentation robustness** — test each architecture's reaction to aggressive image augmentation
-3. **Hyperparameter sensitivity** — sweep ViT-specific hyperparameters to find what actually moves the needle
-
-<p align="center">
-  <img src="assets/Data_Augs.png" width="530" />
-</p>
-
-### Hyperparameter tuning
-
-Sweeping the ViT's hyperparameters surfaced a few clear patterns:
-
-- **Low weight decay** consistently produced higher accuracy
-- Different combinations of **transformer layer count** and **projection dimension** converged on similar accuracy — the model is fairly forgiving here
-- **Input image dimension**, **projection dimension**, and **number of transformer layers** were the most sensitive levers overall
-- Best accuracy came at an image dimension of **72px** — though larger dimensions didn't meaningfully hurt accuracy either (see Section 5.4)
-- Smaller image dimensions **halved training time** and reached peak accuracy in fewer epochs
-
-The best-performing configuration was evaluated on a held-out test set of 500 images:
+<br>
 
 <div align="center">
 
-| Split | F1 Score |
-|---|:---:|
-| Validation | 91.8% |
-| Test | 79% |
-
-</div>
-
-The drop on test is most likely mild overfitting — the dataset has only ~1,000 NORMAL samples to work with.
-
-<p align="center">
-  <img src="assets/Hyperparam_Tuning.png" width="530" />
-</p>
-
----
-
-## Results
-
-> **Our ViT achieved 93.79% accuracy, versus 91.19% for our CNN baseline — while training up to 5× faster.**
-
-- ✅ **Accuracy** — the ViT edges out the CNN on this binary classification task
-- ✅ **Training speed** — up to 5× faster to reach comparable results, meaningfully lowering compute cost
-- ✅ **Augmentation robustness** — the ViT's inherent properties make it considerably less sensitive to aggressive data augmentation than the CNN
-- ⚠️ **Data hunger** — the ViT needs more training data than the CNN to hit optimal performance
-- ⚠️ **Scaling to complexity** — early experiments on the multi-labeled NIH dataset showed performance degrading quickly on more complex, multi-class problems, likely requiring pre-training as suggested by Dosovitskiy et al. (2020)
-
-We couldn't draw firm conclusions about sensitivity to input image size specifically — that remains an open question for this dataset.
-
----
-
-## Try it yourself
-
-The trained model is deployed as an interactive Streamlit app — upload a chest X-ray and get a live classification with confidence scores.
-
-<div align="center">
-
-### **[vitpneumovision.streamlit.app →](https://vitpneumovision.streamlit.app/)**
+| 🔍 OCR | 🧭 Classification | 🧩 Extraction | 🖥️ UI |
+|:---:|:---:|:---:|:---:|
+| Tesseract-powered text recognition for images & PDFs | Lightweight keyword scoring, no ML model needed | Regex + heuristics tuned per document type | Streamlit workspace with JSON export |
 
 </div>
 
 ---
 
-## Conclusion
+## 🚀 Features
 
-Transformers for computer vision are a relatively young area, and this project adds one more data point in their favor: a ViT trained from scratch can match — and in this case beat — a CNN baseline on real diagnostic imaging, while cutting training cost significantly. That said, the ViT's appetite for data and its struggles on more complex multi-label problems are real limitations worth keeping in mind before reaching for it over a CNN by default.
+- 🔎 OCR for images and PDF documents
+- 🏷️ Automatic document classification
+- 🧩 Document-specific structured field extraction
+- 📚 Support for multiple document categories
+- 🖥️ Interactive Streamlit interface
+- 💾 JSON export of extracted fields
+- 📝 OCR text inspection
+- 🕘 Recent processing history in the Streamlit interface
 
-As Dosovitskiy et al. (2020) suggested, pre-training looks like the likely path forward for scaling ViTs to harder vision problems — and it's an obvious next step for extending this work beyond binary classification.
+---
+
+## 📋 Supported Documents
+
+The current pipeline is configured to recognize the following document types. The classifier assigns scores to each supported type based on characteristic keywords found in the OCR output, then selects the highest-scoring category.
+
+| Document Type | Example Extracted Fields |
+|---|---|
+| 🪪 **Driving License** | DL Number, Name, DOB |
+| 🛂 **Passport** | Passport Number, Name, Country |
+| 💼 **W-2** | EIN, Year, Employee Name |
+| 💵 **Paystub** | Net Pay, Employee Name, Employer Name |
+| 🌊 **Flood Certificate** | Borrower Name, Customer Number, Expiration Date |
+| ❔ **Others** | Returned when no supported document type is detected |
+
+---
+
+## 🔄 How It Works
+
+```
+                    ┌──────────────────┐
+                    │   PDF / Image     │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌──────────────────┐
+                    │   Tesseract OCR   │
+                    │  Text Extraction  │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌──────────────────┐
+                    │    Document       │
+                    │  Classification   │
+                    │ (Keyword Scoring) │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌──────────────────┐
+                    │  Document-Specific│
+                    │  Field Extraction │
+                    │  (Regex / Rules)  │
+                    └─────────┬─────────┘
+                              │
+                  ┌───────────┴───────────┐
+                  ▼                       ▼
+          ┌───────────────┐      ┌────────────────┐
+          │  Structured    │      │   OCR Text      │
+          │  JSON Fields   │      │   Output        │
+          └───────────────┘      └────────────────┘
+```
+
+> ℹ️ For PDFs, the current OCR implementation converts **only the first page** to an image before sending it to Tesseract.
+
+---
+
+## 🏗️ Architecture
+
+### 1️⃣ OCR Layer
+
+The OCR layer is implemented in `main.py`.
+
+**Supported input formats:**
+
+`PNG` · `JPG` / `JPEG` · `BMP` · `TIFF` · `PDF`
+
+Images are processed directly with Pillow and Tesseract. PDFs are converted to an image using `pdf2image` before OCR processing.
+
+```python
+ocr_file(path)
+```
+Returns the raw OCR text extracted from the document.
+
+<br>
+
+### 2️⃣ Document Classification
+
+After OCR, the extracted text is normalized and passed to:
+
+```python
+classify_document(text)
+```
+
+The classifier maintains a score for each supported document category and increments the score whenever a matching keyword is found. For example:
+
+```
+Passport
+    ↓
+"passport" · "passport number" · "surname" · "given name" · "nationality" ...
+```
+
+The document type with the highest score is selected. If no supported category receives a score, the document is classified as `Others`.
+
+> This logic is intentionally lightweight and does not require a machine-learning classification model.
+
+<br>
+
+### 3️⃣ Structured Field Extraction
+
+Once the document type is determined, the pipeline dispatches the OCR text to a document-specific extraction function:
+
+```python
+extract_fields(doc_type, text)
+```
+
+The dispatcher routes the document to functions such as:
+
+```
+extract_driving_license()
+extract_passport()
+extract_w2()
+extract_paystub()
+extract_flood()
+```
+
+These functions use regular expressions, normalization, and document-specific heuristics to extract relevant fields.
+
+<details>
+<summary><b>🪪 Driving License</b></summary>
+<br>
+
+- DL number
+- Name
+- DOB
+
+</details>
+
+<details>
+<summary><b>🛂 Passport</b></summary>
+<br>
+
+- Passport number
+- Country
+- Name
+
+Passport name extraction can use the MRZ when available, with additional fallback strategies for printed passport fields.
+
+</details>
+
+<details>
+<summary><b>💼 W-2</b></summary>
+<br>
+
+- EIN
+- Year
+- Employee Name
+
+</details>
+
+<details>
+<summary><b>💵 Paystub</b></summary>
+<br>
+
+- Net Pay
+- Employee Name
+- Employer Name
+
+</details>
+
+<details>
+<summary><b>🌊 Flood Certificate</b></summary>
+<br>
+
+- Borrower name
+- Customer No
+- Expire date
+
+</details>
+
+---
+
+## 🖥️ Streamlit Application
+
+The Streamlit application provides an interactive **Document Intelligence Workspace**. Users can:
+
+1. 📤 Upload a PDF or image
+2. ⚙️ Run OCR automatically
+3. 🏷️ Detect the document type
+4. 👀 View extracted fields
+5. 📝 View the complete OCR text
+6. 💾 Download the extracted fields as JSON
+7. 🕘 Review recent processing runs
+
+The Streamlit application directly reuses the processing functions from `main.py`.
+
+**Run it:**
+
+```bash
+streamlit run streamlit_app.py
+```
+
+**Accepted file types:** `PNG` · `JPG` · `JPEG` · `BMP` · `TIFF` · `TIF` · `PDF`
+
+---
+
+## 📁 Project Structure
+
+```
+DocXtract/
+│
+├── main.py
+├── streamlit_app.py
+│
+├── documents-used/
+│   ├── Doc1.jpg
+│   ├── Doc2.jpg
+│   ├── Doc3.png
+│   ├── Doc4.pdf
+│   └── Doc5.pdf
+│
+└── smaple image.png
+```
+
+> The repository includes five sample documents representing the supported document categories.
+
+---
+
+## ⚙️ Requirements
+
+### 🐍 Python
+
+Use a recent Python 3 installation, then install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 🔤 Tesseract OCR
+
+This project requires **Tesseract OCR** to be installed separately on the system. Python package installation alone is not enough — the `tesseract` system binary must also be installed.
+
+**Configuration options:**
+
+- ✅ **Recommended:** make `tesseract` available on your system `PATH`
+- 🔧 **Optional:** set `TESSERACT_CMD` to the absolute path of the `tesseract` executable
+- 🪟 **Windows:** default install location works out of the box — `C:\Program Files\Tesseract-OCR\tesseract.exe`
+
+> **Streamlit Cloud:** configure the system dependency in your deployment (e.g. via apt packages) and, if needed, set `TESSERACT_CMD` in app secrets/environment.
+
+### 📄 PDF Support
+
+PDF processing uses:
+
+```python
+from pdf2image import convert_from_path
+```
+
+The current implementation converts the **first page** of a PDF into an image and then sends that image to Tesseract.
+
+> `pdf2image` also requires **Poppler** system utilities (`pdftoppm`) on the host machine. Ensure Poppler is installed and available on `PATH` (including Linux/Streamlit Cloud environments).
+
+---
+
+## 📦 Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/ShekhawaTTiku/DocXtract.git
+
+# 2. Move into the project
+cd DocXtract
+
+# 3. Create a virtual environment
+python -m venv venv
+
+# 4. Activate it
+#    Windows:
+venv\Scripts\activate
+#    Linux / macOS:
+source venv/bin/activate
+
+# 5. Install dependencies
+pip install -r requirements.txt
+```
+
+Finally, install and configure Tesseract OCR on the host machine. If it is not on `PATH`, set `TESSERACT_CMD` to its absolute binary path.
+
+---
+
+## ▶️ Usage
+
+### Process the sample documents with Python
+
+The command-line pipeline can process the documents configured in `DOCS_FOLDER`:
+
+```bash
+python main.py
+```
+
+The script processes each file, performs OCR, determines the document type, and prints the extracted fields.
+
+### Launch the Streamlit UI
+
+```bash
+streamlit run streamlit_app.py
+```
+
+Then upload a supported document through the browser interface. The application displays:
+
+```
+Detected Document Type  +  Extracted Fields  +  Raw OCR Text  +  JSON Download
+```
+
+---
+
+## 📤 Example Output
+
+A processed document is converted into a structure similar to:
+
+```json
+{
+  "Name": "John Doe",
+  "DOB": "01/01/1990",
+  "DL number": "D123456789"
+}
+```
+
+> The exact fields depend on the detected document type. The Streamlit application also provides a button to download the extracted fields as a JSON file.
+
+---
+
+## 🎯 Design Decisions
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### Why Tesseract?
+
+Tesseract provides a lightweight local OCR engine without requiring a cloud OCR API — suitable for local development, offline processing, prototyping, and privacy-sensitive document workflows.
+
+</td>
+<td width="33%" valign="top">
+
+### Why keyword-based classification?
+
+The classification stage is intentionally simple and transparent. Instead of a trained model, the pipeline uses document-specific keywords and scoring rules — easy to inspect and modify for new categories.
+
+</td>
+<td width="33%" valign="top">
+
+### Why regex-based extraction?
+
+Each supported document type has a known structure and a small set of fields. Regular expressions and heuristics transform OCR text into structured data without a separate NLP model.
+
+</td>
+</tr>
+</table>
+
+---
+
+## ⚠️ Limitations
+
+The current version is primarily a **prototype / task-oriented** document extraction pipeline.
+
+| Area | Limitation |
+|---|---|
+| **PDF processing** | Only the first page is processed (`convert_from_path(path, first_page=1, last_page=1)`) |
+| **Document classification** | Based on predefined keywords rather than a trained ML model; poor OCR quality or unusual layouts may cause misclassification |
+| **Field extraction** | Rules rely heavily on expected text patterns; OCR errors, layout changes, or different templates can cause fields to return `None` or extract incorrectly |
+| **Configuration** | Some paths are hard-coded for the original Windows development environment, including the Tesseract executable path and document directory |
+
+---
+
+## 🛣️ Future Improvements
+
+- 📄 Multi-page PDF processing
+- 🧹 OCR preprocessing for noisy or rotated documents
+- 📊 Confidence scoring for OCR and extracted fields
+- 🤖 Better document classification using ML / transformer models
+- 🗂️ Layout-aware document understanding
+- ➕ Support for additional document types
+- 🧾 Configurable extraction schemas
+- 🌱 Environment-variable based configuration
+- 🔌 API endpoints for programmatic document processing
+- ✅ Improved validation of extracted identifiers
+- 🐳 Dockerized deployment
+- 🔐 Authentication and access control
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white) | Core implementation |
+| ![Tesseract](https://img.shields.io/badge/-Tesseract_OCR-4B8BBE?style=flat-square) | Text recognition |
+| **pytesseract** | Python interface for Tesseract |
+| **Pillow** | Image loading and processing |
+| **pdf2image** | PDF-to-image conversion |
+| ![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) | Interactive document-processing UI |
+| **Regular Expressions** | Structured field extraction |
+
+---
+
+## 🧪 Sample Documents
+
+The repository contains a `documents-used` directory with sample documents for testing the pipeline:
+
+```
+Doc1.jpg    Doc2.jpg    Doc3.png    Doc4.pdf    Doc5.pdf
+```
+
+---
+
+## 🧭 Pipeline Summary
+
+```
+Input Document
+      │
+      ▼
+┌───────────────┐
+│      OCR       │
+│   Tesseract    │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ Classification │
+│ Keyword Score  │
+└───────┬───────┘
+        │
+        ▼
+┌────────────────┐
+│ Field Extractor │
+│  Regex + Rules  │
+└───────┬────────┘
+        │
+        ▼
+┌──────────────────────┐
+│  Structured Document  │
+│      Data / JSON      │
+└───────────┬──────────┘
+            │
+            └──────────────► Streamlit UI
+```
+
+---
+
+## 👤 Author
+
+**Digvijay Singh Shekhawat**
+
+[![GitHub](https://img.shields.io/badge/GitHub-@ShekhawaTTiku-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ShekhawaTTiku)
+
+---
+
+## 📜 License
+
+No license is currently specified in the repository.
+
+> Add a `LICENSE` file if you intend to distribute the project under an open-source license.
 
 ---
 
 <div align="center">
-<sub>Built with PyTorch · Deployed with Streamlit</sub>
+
+*Built with 🐍 Python, 🔤 Tesseract, and 🖥️ Streamlit*
+
 </div>
