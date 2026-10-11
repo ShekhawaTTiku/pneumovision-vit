@@ -11,7 +11,19 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](#-streamlit-application)
 [![License](https://img.shields.io/badge/License-MPL--2.0-blue?style=for-the-badge)](LICENSE)
 
-**[Overview](#-overview) · [Results](#-recorded-results) · [Installation](#-installation) · [Usage](#-usage)**
+**[Live Demo](https://vitpneumovision.streamlit.app/) · [Overview](#-overview) · [Results](#-recorded-results) · [Installation](#-installation) · [Usage](#-usage)**
+
+</div>
+
+---
+
+<div align="center">
+
+### 🌐 Live Demo
+
+**[Try PneumoVision-ViT on Streamlit → vitpneumovision.streamlit.app](https://vitpneumovision.streamlit.app/)**
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Open_App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://vitpneumovision.streamlit.app/)
 
 </div>
 
@@ -180,7 +192,7 @@ Precision, recall, and F1 use **PNEUMONIA as the positive class**. High pneumoni
 
 ## 🖥️ Streamlit Application
 
-The interface lets you:
+The app is deployed at **[vitpneumovision.streamlit.app](https://vitpneumovision.streamlit.app/)**, or you can run it locally. The interface lets you:
 
 1. Upload a **JPG, JPEG, or PNG** image.
 2. Preview the uploaded X-ray.
@@ -188,7 +200,7 @@ The interface lets you:
 4. Review the predicted class and both class probabilities.
 5. Inspect the checkpoint epoch and saved validation F1.
 
-Launch the app from the project root:
+Launch the app locally from the project root:
 
 ```bash
 python -m streamlit run app.py
